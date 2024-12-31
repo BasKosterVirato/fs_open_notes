@@ -2,17 +2,9 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-const requestLogger = (request, response, next) => {
-  console.log('Method:', request.method)
-  console.log('Path:  ', request.path)
-  console.log('Body:  ', request.body)
-  console.log('---')
-  next()
-}
-
 app.use(cors())
 app.use(express.json())
-app.use(requestLogger)
+app.use(express.static('dist'))
 
 let notes = [
   {
@@ -82,6 +74,20 @@ app.delete('/api/notes/:id', (request, response) => {
   notes = notes.filter(note => note.id !== id)
 
   response.status(204).end()
+})
+
+app.put('/api/notes/:id', (request, response) => {
+  // Check if note with ID exists. If not ,respond with 204 - No content
+  // If exists, replace and respind with 200 - OK
+  const id = request.params.id
+  let noteIndex = notes.findIndex(note => note.id === id)
+
+  if (noteIndex !== -1) {
+    notes[noteIndex] = request.body
+    response.json(notes[noteIndex])
+  } else {
+    response.status(204).end()
+  }
 })
 
 const unknownEndpoint = (request, response) => {
