@@ -56,7 +56,7 @@ app.post('/api/notes', (request, response) => {
 
   notes = notes.concat(note)
 
-  response.json(note)
+  response.status(201).json(note)
 })
 
 app.get('/api/notes/:id', (request, response) => {
